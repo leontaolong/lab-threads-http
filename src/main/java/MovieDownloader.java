@@ -24,23 +24,26 @@ public class MovieDownloader {
 		String urlString = "";
 		try {
 			urlString = "http://www.omdbapi.com/?s=" + URLEncoder.encode(movie, "UTF-8") + "&type=movie";
-		}catch(UnsupportedEncodingException uee){
+		}catch(UnsupportedEncodingException uee){ // catch error if the encoding is not successful
 			return null;
 		}
 
+		// create java HTTP connection and bufferreader for file I/O
 		HttpURLConnection urlConnection = null;
 		BufferedReader reader = null;
 
 		String[] movies = null;
 
 		try {
-
+			// create url
 			URL url = new URL(urlString);
 
+			// get the server connected for http requests
 			urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setRequestMethod("GET");
 			urlConnection.connect();
 
+			// for reading the response from IMDB API 
 			InputStream inputStream = urlConnection.getInputStream();
 			StringBuffer buffer = new StringBuffer();
 			if (inputStream == null) {
@@ -57,6 +60,7 @@ public class MovieDownloader {
 			if (buffer.length() == 0) {
 				return null;
 			}
+			// tokenlize response to json for displaying to the user 
 			String results = buffer.toString();
 			results = results.replace("{\"Search\":[","");
 			results = results.replace("]}","");
@@ -64,12 +68,12 @@ public class MovieDownloader {
 
 			movies = results.split("\n");
 		} 
-		catch (IOException e) {
+		catch (IOException e) { // catch I/O error
 			return null;
 		} 
-		finally {
+		finally { // disconnect the server and close file I/O
 			if (urlConnection != null) {
-				urlConnection.disconnect();
+				urlConnection.disconnect(); 
 			}
 			if (reader != null) {
 				try {
@@ -79,7 +83,7 @@ public class MovieDownloader {
 				}
 			}
 		}
-
+		// return json
 		return movies;
 	}
 
@@ -90,6 +94,7 @@ public class MovieDownloader {
 
 		boolean searching = true;
 
+		// keeps prompting user until user enters "q" to quit
 		while(searching) {					
 			System.out.print("Enter a movie name to search for or type 'q' to quit: ");
 			String searchTerm = sc.nextLine().trim();

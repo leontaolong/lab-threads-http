@@ -10,26 +10,66 @@ import java.util.Random;
  * @author Joel Ross
  */
 public class SortRacer {
+	public static class MergeRunnable implements Runnable {
+		private Integer[] nums;
+		private SimpleDateFormat dateFormat;
+		public MergeRunnable() {
+			nums = shuffled((int)Math.pow(10,7), 448); 
+			dateFormat = new SimpleDateFormat("HH:mm:ss.SSSS"); //for output
+		}
+		public void run() {
+			System.out.println("Starting merge sort at "+dateFormat.format(new Date()));
+			Sorting.mergeSort(nums);
+			System.out.println("Merge sort finished at "+dateFormat.format(new Date())+" !");
+		}
 
-	public static void main(String[] args) 
-	{
-		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSSS"); //for output
-		Integer[] nums;
+		public Integer[] shuffled(int n, int seed)
+			{
+				ArrayList<Integer> nums = new ArrayList<Integer>();
+				for(int i=0; i<n; i++) {
+					nums.add(i+1);
+				}
+				if(seed >= 0)
+					Collections.shuffle(nums, new Random(seed));
+				else
+					Collections.shuffle(nums);
+				return nums.toArray(new Integer[0]);		
+			}
+	}
 
-		
-		/** Merge Sort **/
-		nums = shuffled((int)Math.pow(10,7), 448); //a list of shuffled 10 million numbers
-
-		System.out.println("Starting merge sort at "+dateFormat.format(new Date()));
-		Sorting.mergeSort(nums);
-		System.out.println("Merge sort finished at "+dateFormat.format(new Date())+" !");
-
-		
-		/** Quick Sort **/
-		nums = shuffled((int)Math.pow(10,7), 448); //a list of shuffled 10 million numbers
+		public static class QuickRunnable implements Runnable {
+		private Integer[] nums;
+		private SimpleDateFormat dateFormat;
+		public QuickRunnable() {
+			nums = shuffled((int)Math.pow(10,7), 448); 
+			dateFormat = new SimpleDateFormat("HH:mm:ss.SSSS"); //for output
+		}
+		public void run() {
 		System.out.println("Starting quicksort at "+dateFormat.format(new Date()));
 		Sorting.quickSort(nums);
 		System.out.println("Quicksort finished at "+dateFormat.format(new Date())+" !");
+		}
+
+		public Integer[] shuffled(int n, int seed)
+			{
+				ArrayList<Integer> nums = new ArrayList<Integer>();
+				for(int i=0; i<n; i++) {
+					nums.add(i+1);
+				}
+				if(seed >= 0)
+					Collections.shuffle(nums, new Random(seed));
+				else
+					Collections.shuffle(nums);
+				return nums.toArray(new Integer[0]);		
+			}
+	}
+
+	public static void main(String[] args)
+	{
+		Thread t1 = new Thread(new MergeRunnable());
+		Thread t2 = new Thread(new QuickRunnable());
+		t1.start();
+		t2.start();
 	}
 	
 	
@@ -39,17 +79,17 @@ public class SortRacer {
 	 * @param seed A random seed, if less than 0 then unseeded
 	 * @return An array of shuffled integers
 	 */
-	public static Integer[] shuffled(int n, int seed)
-	{
-		ArrayList<Integer> nums = new ArrayList<Integer>();
-		for(int i=0; i<n; i++) {
-			nums.add(i+1);
-		}
-		if(seed >= 0)
-			Collections.shuffle(nums, new Random(seed));
-		else
-			Collections.shuffle(nums);
-		return nums.toArray(new Integer[0]);		
-	}
+	// public static Integer[] shuffled(int n, int seed)
+	// {
+	// 	ArrayList<Integer> nums = new ArrayList<Integer>();
+	// 	for(int i=0; i<n; i++) {
+	// 		nums.add(i+1);
+	// 	}
+	// 	if(seed >= 0)
+	// 		Collections.shuffle(nums, new Random(seed));
+	// 	else
+	// 		Collections.shuffle(nums);
+	// 	return nums.toArray(new Integer[0]);		
+	// }
 	
 }
